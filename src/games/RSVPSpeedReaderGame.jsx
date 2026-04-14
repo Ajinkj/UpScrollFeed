@@ -90,8 +90,6 @@ export default function RSVPSpeedReaderGame({ onComplete }) {
       timerRef.current = setTimeout(() => {
         setCurrentIndex(prev => {
           if (prev + 1 >= words.length) {
-            setGameState('finished');
-            if (onComplete) onComplete(Math.round(wpm * 1.5), { wpm });
             return prev;
           }
           return prev + 1;
@@ -101,6 +99,13 @@ export default function RSVPSpeedReaderGame({ onComplete }) {
 
     return () => clearTimeout(timerRef.current);
   }, [gameState, currentIndex, words, wpm]);
+
+  useEffect(() => {
+    if (gameState === 'playing' && words.length > 0 && currentIndex === words.length - 1) {
+      setGameState('finished');
+      if (onComplete) onComplete(Math.round(wpm * 1.5), { wpm });
+    }
+  }, [currentIndex, gameState, words.length, wpm, onComplete]);
 
   const togglePlay = () => {
     if (gameState === 'setup' || gameState === 'paused') {

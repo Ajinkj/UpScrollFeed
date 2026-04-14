@@ -68,7 +68,7 @@ export default function StroopGame({ onComplete }) {
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            stopGame();
+            clearInterval(timerRef.current);
             return 0;
           }
           return prev - 1;
@@ -77,7 +77,13 @@ export default function StroopGame({ onComplete }) {
     }
 
     return () => clearInterval(timerRef.current);
-  }, [isPlaying, timeLeft, stopGame]);
+  }, [isPlaying, timeLeft]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && isPlaying) {
+      stopGame();
+    }
+  }, [timeLeft, isPlaying, stopGame]);
 
   const handleColorSelection = useCallback((selectedColorId) => {
     if (!isPlaying) return;

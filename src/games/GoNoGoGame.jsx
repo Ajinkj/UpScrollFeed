@@ -44,16 +44,16 @@ export default function GoNoGoGame({ onComplete }) {
   }, [clearTimers, onComplete]);
 
   const addStrike = useCallback(() => {
-    setStrikes(s => {
-      const newStrikes = s + 1;
-      if (newStrikes >= MAX_STRIKES) {
-        stopGame();
-      }
-      return newStrikes;
-    });
+    setStrikes(s => s + 1);
     setFeedback('error');
     setTimeout(() => setFeedback(null), 300);
-  }, [stopGame]);
+  }, []);
+
+  useEffect(() => {
+    if (strikes >= MAX_STRIKES && gameState === 'playing') {
+      stopGame();
+    }
+  }, [strikes, gameState, stopGame]);
 
   const scheduleNextTarget = useCallback((currentSpeed) => {
     if (!isPlayingRef.current) return;

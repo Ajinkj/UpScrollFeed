@@ -112,14 +112,19 @@ export default function TaskSwitchingGame({ onComplete }) {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          setGameState('gameover');
-          if (onComplete) onComplete(scoreRef.current, {});
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
   };
+
+  useEffect(() => {
+    if (timeLeft === 0 && gameState === 'playing') {
+      setGameState('gameover');
+      if (onComplete) onComplete(scoreRef.current, {});
+    }
+  }, [timeLeft, gameState, onComplete]);
 
   useEffect(() => {
     return () => clearInterval(timerRef.current);

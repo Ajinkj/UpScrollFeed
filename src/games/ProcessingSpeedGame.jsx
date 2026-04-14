@@ -58,15 +58,20 @@ export default function ProcessingSpeedGame({ onComplete }) {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          setGameState('gameover');
-          if (onComplete) onComplete(scoreRef.current, {});
-          isPlayingRef.current = false;
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
   };
+
+  useEffect(() => {
+    if (timeLeft === 0 && gameState === 'playing') {
+      setGameState('gameover');
+      isPlayingRef.current = false;
+      if (onComplete) onComplete(scoreRef.current, {});
+    }
+  }, [timeLeft, gameState, onComplete]);
 
   useEffect(() => {
     return () => clearInterval(timerRef.current);
